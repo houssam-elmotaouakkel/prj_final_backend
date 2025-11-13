@@ -1,19 +1,24 @@
-const productsService = require('../services/products.service');
+const productsService = require("../services/products.service");
 
 async function getProducts(req, res, next) {
   try {
-    const page = parseInt(req.query.page || '1', 10);
-    const limit = parseInt(req.query.limit || '10', 10);
+    const page = parseInt(req.query.page || "1", 10);
+    const limit = parseInt(req.query.limit || "10", 10);
 
     const { items, total, pages } = await productsService.listProducts({
       category: req.query.category,
-      inStock: req.query.inStock === 'true' ? true : req.query.inStock === 'false' ? false : undefined,
+      inStock:
+        req.query.inStock === "true"
+          ? true
+          : req.query.inStock === "false"
+          ? false
+          : undefined,
       page,
       limit,
     });
 
     res.json({
-      status: 'success',
+      status: "success",
       data: items,
       meta: { total, page, pages },
     });
@@ -27,13 +32,13 @@ async function getProduct(req, res, next) {
     const product = await productsService.getProductById(req.params.id);
     if (!product) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Produit introuvable',
+        status: "error",
+        message: "Produit introuvable",
       });
     }
 
     res.json({
-      status: 'success',
+      status: "success",
       data: product,
     });
   } catch (err) {
@@ -45,7 +50,7 @@ async function createProduct(req, res, next) {
   try {
     const product = await productsService.createProduct(req.body);
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: product,
     });
   } catch (err) {
@@ -55,16 +60,19 @@ async function createProduct(req, res, next) {
 
 async function updateProduct(req, res, next) {
   try {
-    const product = await productsService.updateProduct(req.params.id, req.body);
+    const product = await productsService.updateProduct(
+      req.params.id,
+      req.body
+    );
     if (!product) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Produit introuvable',
+        status: "error",
+        message: "Produit introuvable",
       });
     }
 
     res.json({
-      status: 'success',
+      status: "success",
       data: product,
     });
   } catch (err) {
@@ -72,17 +80,22 @@ async function updateProduct(req, res, next) {
   }
 }
 
+// products.controller.js (Function deleteProduct)
 async function deleteProduct(req, res, next) {
   try {
     const product = await productsService.deleteProduct(req.params.id);
     if (!product) {
       return res.status(404).json({
-        status: 'error',
-        message: 'Produit introuvable',
+        status: "error",
+        message: "Produit introuvable",
       });
     }
 
-    res.status(204).send(); // pas de contenu
+    res.status(200).json({
+      // Modification pour correspondre au test (200 OK)
+      status: "success",
+      message: "Produit supprimé avec succès",
+    });
   } catch (err) {
     next(err);
   }
